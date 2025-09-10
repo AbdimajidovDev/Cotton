@@ -1,5 +1,5 @@
-from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.core.validators import FileExtensionValidator
 
 from django.db import models
@@ -8,21 +8,22 @@ import uuid
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.users.validations import validate_phone_number, check_image_size
+from django.contrib.auth.models import BaseUserManager
 
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, phone_number, password=None, **extra_fields):
-        if not phone_number:
-            raise ValueError("Phone number is required")
-        extra_fields.setdefault("username", phone_number)
-        user = self.model(phone_number=phone_number, **extra_fields)
+    def create_user(self, login, password=None, **extra_fields):
+        if not login:
+            raise ValueError("Login is required")
+
+        user = self.model(login=login, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone_number, password=None, **extra_fields):
+    def create_superuser(self, login, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -31,10 +32,11 @@ class UserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self.create_user(phone_number, password, **extra_fields)
+        return self.create_user(login, password, **extra_fields)
 
 
-class User(AbstractUser):
+
+class User(AbstractBaseUser, PermissionsMixin):
     class UserRoles(models.TextChoices):
         REGION = 'r', 'region'
         DISTRICT = 'd', 'district'
@@ -52,10 +54,12 @@ class User(AbstractUser):
     ], null=True, blank=True)
     role = models.CharField(max_length=10, choices=UserRoles.choices)
     password = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
 
     USERNAME_FIELD = "login"
-    REQUIRED_FIELDS = ['full_name', 'phone_number']
+    REQUIRED_FIELDS = ['full_name', 'phone_number', 'role']
     objects = UserManager()
 
     def __str__(self):
@@ -70,8 +74,5 @@ class User(AbstractUser):
 
     class Meta:
         db_table = 'user'
-        ordering = ['-date_joined']
 
-
-""" sdkdh"""
 
