@@ -7,6 +7,8 @@ from .views import (
     FarmAPI, FarmDetailAPI
 )
 
+app_name = 'region'
+
 urlpatterns = [
     path("regions/", RegionAPI.as_view(), name="region-list-create"),
     path("regions/<int:pk>/", RegionDetailAPI.as_view(), name="region-detail"),
