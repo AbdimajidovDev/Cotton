@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.fields import CharField
 
 
 class Region(models.Model):
@@ -7,7 +8,6 @@ class Region(models.Model):
     name = models.CharField(max_length=255)
     plan = models.FloatField()
     crop_area = models.FloatField()
-    farm = models.ForeignKey("Farm", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -20,7 +20,6 @@ class District(models.Model):
     name = models.CharField(max_length=255)
     plan = models.FloatField()
     crop_area = models.FloatField()
-    farm = models.ForeignKey("Farm", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -33,7 +32,6 @@ class Massive(models.Model):
     name = models.CharField(max_length=255)
     plan = models.FloatField()
     crop_area = models.FloatField()
-    farm = models.ForeignKey("Farm", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -45,7 +43,6 @@ class Neighborhood(models.Model):
     massive = models.ForeignKey(Massive, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     crop_area = models.FloatField()
-    farm = models.ForeignKey("Farm", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -53,10 +50,18 @@ class Neighborhood(models.Model):
 
 
 class Farm(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, blank=True, null=True)
+    district = models.ForeignKey(District, on_delete=models.SET_NULL, blank=True, null=True)
+    massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, blank=True, null=True)
+    neighborhood = models.ForeignKey(Neighborhood, on_delete=models.SET_NULL, blank=True, null=True)
     full_name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     INN = models.CharField(max_length=20, unique=True)
     phone_number = models.CharField(max_length=13, unique=True)
+    claster = models.CharField(max_length=255)
+    cotton_area = models.FloatField()
+    productivity = models.FloatField()
+    gross_yield = models.FloatField()
 
     def __str__(self):
         return self.full_name

@@ -4,28 +4,28 @@ from .models import Region, District, Massive, Neighborhood, Farm
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "plan", "crop_area", "farm", "user", "created_at")
+    list_display = ("id", "name", "plan", "crop_area", "user", "created_at")
     list_filter = ("farm", "created_at")
     search_fields = ("name",)
 
 
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "plan", "crop_area", "region", "farm", "user", "created_at")
+    list_display = ("id", "name", "plan", "crop_area", "region", "user", "created_at")
     list_filter = ("region", "farm", "created_at")
     search_fields = ("name",)
 
 
 @admin.register(Massive)
 class MassiveAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "plan", "crop_area", "district", "farm", "user", "created_at")
+    list_display = ("id", "name", "plan", "crop_area", "district", "user", "created_at")
     list_filter = ("district", "farm", "created_at")
     search_fields = ("name",)
 
 
 @admin.register(Neighborhood)
 class NeighborhoodAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "crop_area", "massive", "farm", "user", "created_at")
+    list_display = ("id", "name", "crop_area", "massive", "user", "created_at")
     list_filter = ("massive", "farm", "created_at")
     search_fields = ("name",)
 
