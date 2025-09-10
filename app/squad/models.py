@@ -55,7 +55,7 @@ class WorkerDailyPicking(models.Model):
         return f"{self.worker.full_name} - {self.masse} kg"
 
 
-class Territory(models.Model):  # hudud
+class Territory(models.Model):
     name = models.CharField(max_length=255)
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
     picked_area = models.FloatField()
@@ -64,7 +64,7 @@ class Territory(models.Model):  # hudud
         return self.name
 
 
-class Scalesman(models.Model):  # tarozi
+class Scalesman(models.Model):
     pqqm_id = models.IntegerField()
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     squad_number = models.ForeignKey(Squad, on_delete=models.CASCADE)
@@ -76,7 +76,7 @@ class Scalesman(models.Model):  # tarozi
         return f"Tarozi #{self.pk}"
 
 
-class CottonPicker(models.Model):  # terim mashinasi
+class CottonPicker(models.Model):
     car_number = models.IntegerField()
     hudud = models.ForeignKey(Territory, on_delete=models.CASCADE)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
@@ -96,4 +96,3 @@ class CarDailyPicking(models.Model):
 
     def __str__(self):
         return f"{self.cotton_picker.car_number}"
-
