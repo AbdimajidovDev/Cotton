@@ -58,7 +58,7 @@ class Farm(models.Model):
     full_name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     INN = models.CharField(max_length=20, unique=True)
-    phone_number = models.CharField(max_length=13, unique=True)
+    phone_number = models.CharField(max_length=20)
     claster = models.CharField(max_length=255)
     cotton_area = models.FloatField()
     productivity = models.FloatField()
@@ -66,3 +66,11 @@ class Farm(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class FarmExcelUpload(models.Model):
+    file = models.FileField(upload_to="uploads/farms/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Excel: {self.file.name}"

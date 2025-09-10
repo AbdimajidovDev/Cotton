@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'app.users',
     'app.region',
     'app.squad',
-    'app.common',
 ]
 
 MIDDLEWARE = [
