@@ -54,6 +54,7 @@ class Farm(models.Model):
     district = models.ForeignKey(District, on_delete=models.SET_NULL, blank=True, null=True)
     massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, blank=True, null=True)
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.SET_NULL, blank=True, null=True)
+    massive_name = models.CharField(max_length=255)
     full_name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     INN = models.CharField(max_length=20, unique=True)

@@ -6,4 +6,5 @@ urlpatterns = [
     path('users/', include('app.users.urls')),
     path('region/', include('app.region.urls')),
     path('squad/', include('app.squad.urls')),
+    # path('common/', include('app.common.urls')),
 ]
