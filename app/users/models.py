@@ -38,11 +38,15 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     class UserRoles(models.TextChoices):
+        ADMIN = 'a', "admin"
         REGION = 'r', 'region'
         DISTRICT = 'd', 'district'
         MASSIVE = 'm', 'massive'
         NEIGHBORHOOD = 'n', 'neighborhood'
-        SQUAD = 's', 'squad'
+        SQUAD = 'sd', 'squad'
+        SCALESMAN = 'sm', 'scalesman'
+        SHTAB = 'sh', 'shtab'
+
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=100)

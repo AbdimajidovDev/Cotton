@@ -1,34 +1,46 @@
+from django.utils import timezone
+
 from django.db import models
 
-from app.region.models import Neighborhood, Farm
+from app.region.models import Neighborhood, Farm, Massive
 from app.users.models import User
 
 
-class Squad(models.Model):
-    class PickingType(models.TextChoices):
-        first = 'f', 'first'
-        second = 's', 'second'
-        third = 't', 'third'
-        fourth = 'fr', 'fourth'
+class PickingType(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
 
-    squad_number = models.BigIntegerField()
+class SquadNumber(models.Model):
+    number = models.BigIntegerField()
+    def __str__(self):
+        return self.number
+
+class Squad(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True)
+    shtab = models.ForeignKey('Shtab', on_delete=models.SET_NULL, null=True, blank=True)
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
-    picking_type = models.CharField(max_length=100, choices=PickingType.choices)
+    picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
     workers_count = models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"Otryad: {self.squad_number}"
+        return f"Otryad: {self.squad_number.number}"
 
 
 class SquadDailyPicking(models.Model):
+    class Status(models.TextChoices):
+        active = "a", "active"
+        finished = "f", "finished"
+
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.active)
     masse = models.FloatField()
     picked_area = models.FloatField()
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_time = models.DateField()
+    end_time = models.DateField()
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -63,14 +75,19 @@ class Territory(models.Model):
     def __str__(self):
         return self.name
 
+class PQQM(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class Scalesman(models.Model):
-    pqqm_id = models.IntegerField()
+    pqqm_id = models.ForeignKey(PQQM, on_delete=models.SET_NULL, blank=True, null=True)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     squad_number = models.ForeignKey(Squad, on_delete=models.CASCADE)
     weight_checked = models.FloatField()
     tech_number = models.CharField(max_length=50)
-    date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Tarozi #{self.pk}"
@@ -96,3 +113,17 @@ class CarDailyPicking(models.Model):
 
     def __str__(self):
         return f"{self.cotton_picker.car_number}"
+
+
+class Shtab(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, null=True, blank=True)
+    squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
+    picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
+    number_pickers = models.IntegerField()
+    workers_count = models.IntegerField()
+    created_at = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Otryad: {self.squad_number}"
