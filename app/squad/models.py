@@ -1,5 +1,3 @@
-from django.utils import timezone
-
 from django.db import models
 
 from app.region.models import Neighborhood, Farm, Massive
@@ -12,9 +10,9 @@ class PickingType(models.Model):
         return self.name
 
 class SquadNumber(models.Model):
-    number = models.BigIntegerField()
+    number = models.IntegerField()
     def __str__(self):
-        return self.number
+        return str(self.number)
 
 class Squad(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
