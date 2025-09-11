@@ -9,6 +9,7 @@ from .models import Region, District, Massive, Neighborhood, Farm
 
 @extend_schema(tags=['Region'])
 class RegionAPI(APIView):
+    serializer_class = RegionSerializer
     def get(self, request):
         regions = Region.objects.all()
         serializer = RegionSerializer(regions, many=True)
@@ -24,6 +25,7 @@ class RegionAPI(APIView):
 
 @extend_schema(tags=['Region'])
 class RegionDetailAPI(APIView):
+    serializer_class = RegionSerializer
     def get(self, request, pk):
         region = get_object_or_404(Region, pk=pk)
         serializer = RegionSerializer(region)
@@ -45,6 +47,7 @@ class RegionDetailAPI(APIView):
 
 @extend_schema(tags=['Farm'])
 class FarmAPI(APIView):
+    serializer_class = FarmSerializer
     def get(self, request):
         farms = Farm.objects.all()
         serializer = FarmSerializer(farms, many=True)
@@ -60,6 +63,7 @@ class FarmAPI(APIView):
 
 @extend_schema(tags=['Farm'])
 class FarmDetailAPI(APIView):
+    serializer_class = FarmSerializer
     def get(self, request, pk):
         farm = get_object_or_404(Farm, pk=pk)
         serializer = FarmSerializer(farm)
@@ -81,6 +85,7 @@ class FarmDetailAPI(APIView):
 
 @extend_schema(tags=['District'])
 class DistrictAPI(APIView):
+    serializer_class = DistrictSerializer
     def get(self, request):
         districts = District.objects.all()
         serializer = DistrictSerializer(districts, many=True)
@@ -96,6 +101,7 @@ class DistrictAPI(APIView):
 
 @extend_schema(tags=['District'])
 class DistrictDetailAPI(APIView):
+    serializer_class = DistrictSerializer
     def get(self, request, pk):
         district = get_object_or_404(District, pk=pk)
         serializer = DistrictSerializer(district)
@@ -117,6 +123,7 @@ class DistrictDetailAPI(APIView):
 
 @extend_schema(tags=['Massive'])
 class MassiveAPI(APIView):
+    serializer_class = MassiveSerializer
     def get(self, request):
         massive = Massive.objects.all()
         serializer = MassiveSerializer(massive, many=True)
@@ -132,6 +139,7 @@ class MassiveAPI(APIView):
 
 @extend_schema(tags=['Massive'])
 class MassiveDetailAPI(APIView):
+    serializer_class = MassiveSerializer
     def get(self, request, pk):
         massive = get_object_or_404(Massive, pk=pk)
         serializer = MassiveSerializer(massive)
@@ -153,6 +161,7 @@ class MassiveDetailAPI(APIView):
 
 @extend_schema(tags=['Neighborhood'])
 class NeighborhoodAPI(APIView):
+    serializer_class = NeighborhoodSerializer
     def get(self, request):
         neighborhoods = Neighborhood.objects.all()
         serializer = NeighborhoodSerializer(neighborhoods, many=True)
@@ -168,6 +177,7 @@ class NeighborhoodAPI(APIView):
 
 @extend_schema(tags=['Neighborhood'])
 class NeighborhoodDetailAPI(APIView):
+    serializer_class = NeighborhoodSerializer
     def get(self, request, pk):
         neighborhood = get_object_or_404(Neighborhood, pk=pk)
         serializer = NeighborhoodSerializer(neighborhood)

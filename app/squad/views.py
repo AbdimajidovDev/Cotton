@@ -16,6 +16,8 @@ from .serializers import (
 
 @extend_schema(tags=['Squad'])
 class SquadAPI(APIView):
+    serializer_class = SquadSerializer
+
     def get(self, request):
         queryset = Squad.objects.all()
         serializer = SquadSerializer(queryset, many=True)
@@ -31,6 +33,8 @@ class SquadAPI(APIView):
 
 @extend_schema(tags=['Squad'])
 class SquadDetailAPI(APIView):
+    serializer_class = SquadSerializer
+
     def get(self, request, pk):
         squad = get_object_or_404(Squad, pk=pk)
         serializer = SquadSerializer(squad)
@@ -52,6 +56,8 @@ class SquadDetailAPI(APIView):
 
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyAPI(APIView):
+    serializer_class = SquadDailySerializer
+
     def get(self, request):
         queryset = SquadDailyPicking.objects.all()
         serializer = SquadDailySerializer(queryset, many=True)
@@ -67,6 +73,8 @@ class SquadDailyAPI(APIView):
 
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyDetailAPI(APIView):
+    serializer_class = SquadDailySerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(SquadDailyPicking, pk=pk)
         serializer = SquadDailySerializer(obj)
@@ -88,6 +96,8 @@ class SquadDailyDetailAPI(APIView):
 
 @extend_schema(tags=['Worker'])
 class WorkerAPI(APIView):
+    serializer_class = WorkerSerializer
+
     def get(self, request):
         queryset = Worker.objects.all()
         serializer = WorkerSerializer(queryset, many=True)
@@ -103,6 +113,8 @@ class WorkerAPI(APIView):
 
 @extend_schema(tags=['Worker'])
 class WorkerDetailAPI(APIView):
+    serializer_class = WorkerSerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(Worker, pk=pk)
         serializer = WorkerSerializer(obj)
@@ -124,6 +136,8 @@ class WorkerDetailAPI(APIView):
 
 @extend_schema(tags=['WorkerDaily'])
 class WorkerDailyAPI(APIView):
+    serializer_class = WorkerDailySerializer
+
     def get(self, request):
         queryset = WorkerDailyPicking.objects.all()
         serializer = WorkerDailySerializer(queryset, many=True)
@@ -139,6 +153,8 @@ class WorkerDailyAPI(APIView):
 
 @extend_schema(tags=['WorkerDaily'])
 class WorkerDailyDetailAPI(APIView):
+    serializer_class = WorkerDailySerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(WorkerDailyPicking, pk=pk)
         serializer = WorkerDailySerializer(obj)
@@ -160,6 +176,8 @@ class WorkerDailyDetailAPI(APIView):
 
 @extend_schema(tags=['Territory'])
 class TerritoryAPI(APIView):
+    serializer_class = TerritorySerializer
+
     def get(self, request):
         queryset = Territory.objects.all()
         serializer = TerritorySerializer(queryset, many=True)
@@ -175,6 +193,8 @@ class TerritoryAPI(APIView):
 
 @extend_schema(tags=['Territory'])
 class TerritoryDetailAPI(APIView):
+    serializer_class = TerritorySerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(Territory, pk=pk)
         serializer = TerritorySerializer(obj)
@@ -196,6 +216,8 @@ class TerritoryDetailAPI(APIView):
 
 @extend_schema(tags=['Scalesman'])
 class ScalesmanAPI(APIView):
+    serializer_class = ScalesmanSerializer
+
     def get(self, request):
         queryset = Scalesman.objects.all()
         serializer = ScalesmanSerializer(queryset, many=True)
@@ -211,6 +233,8 @@ class ScalesmanAPI(APIView):
 
 @extend_schema(tags=['Scalesman'])
 class ScalesmanDetailAPI(APIView):
+    serializer_class = ScalesmanSerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(Scalesman, pk=pk)
         serializer = ScalesmanSerializer(obj)
@@ -232,6 +256,8 @@ class ScalesmanDetailAPI(APIView):
 
 @extend_schema(tags=['CottonPicker'])
 class CottonPickerAPI(APIView):
+    serializer_class = CottonPickerSerializer
+
     def get(self, request):
         queryset = CottonPicker.objects.all()
         serializer = CottonPickerSerializer(queryset, many=True)
@@ -247,6 +273,8 @@ class CottonPickerAPI(APIView):
 
 @extend_schema(tags=['CottonPicker'])
 class CottonPickerDetailAPI(APIView):
+    serializer_class = CottonPickerSerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(CottonPicker, pk=pk)
         serializer = CottonPickerSerializer(obj)
@@ -268,6 +296,8 @@ class CottonPickerDetailAPI(APIView):
 
 @extend_schema(tags=['CarDaily'])
 class CarDailyAPI(APIView):
+    serializer_class = CarDailySerializer
+
     def get(self, request):
         queryset = CarDailyPicking.objects.all()
         serializer = CarDailySerializer(queryset, many=True)
@@ -283,6 +313,8 @@ class CarDailyAPI(APIView):
 
 @extend_schema(tags=['CarDaily'])
 class CarDailyDetailAPI(APIView):
+    serializer_class = CarDailySerializer
+
     def get(self, request, pk):
         obj = get_object_or_404(CarDailyPicking, pk=pk)
         serializer = CarDailySerializer(obj)
