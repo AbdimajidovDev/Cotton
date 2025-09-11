@@ -1,9 +1,11 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from .serializers import LoginSerializer, LogoutSerializer
 
 
+@extend_schema(tags=['Login'])
 class LoginAPIView(APIView):
     serializer_class = LoginSerializer
 
@@ -27,6 +29,7 @@ class LoginAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=['Login'])
 class LogOutAPIView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = LogoutSerializer
