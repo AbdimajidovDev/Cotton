@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from .models import User
 
 
 class LoginSerializer(serializers.Serializer):
@@ -27,7 +28,6 @@ class LoginSerializer(serializers.Serializer):
         return attrs
 
 
-
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
@@ -44,3 +44,29 @@ class LogoutSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
         except TokenError:
             self.fail('bad_token')
+
+
+class MeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "full_name", "username", "phone_number", "image", "role")
+
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "phone_number": {'read_only': True},
+        }
+
+    def validate_full_name(self, value):
+        if len(value) <= 3:
+            raise ValidationError("Full name must not exceed 3 characters.")
+        return value
+
+    def update(self, instance, validated_data):
+        instance.full_name = validated_data.get('full_name', instance.full_name)
+        instance.username = validated_data.get('username', instance.username)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.image = validated_data.get('image', instance.image)
+        instance.role = validated_data.get('role', instance.role)
+        instance.save()
+
+        return instance
