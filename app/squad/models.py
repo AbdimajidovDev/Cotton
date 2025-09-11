@@ -23,6 +23,7 @@ class Squad(models.Model):
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
+    phone_number = models.CharField(max_length=255, blank=True, null=True)
     workers_count = models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
 
