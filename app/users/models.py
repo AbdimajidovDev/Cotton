@@ -14,16 +14,16 @@ from django.contrib.auth.models import BaseUserManager
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, login, password=None, **extra_fields):
-        if not login:
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
             raise ValueError("Login is required")
 
-        user = self.model(login=login, **extra_fields)
+        user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, login, password=None, **extra_fields):
+    def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -32,8 +32,7 @@ class UserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self.create_user(login, password, **extra_fields)
-
+        return self.create_user(username, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -47,10 +46,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         SCALESMAN = 'sm', 'scalesman'
         SHTAB = 'sh', 'shtab'
 
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=100)
-    login = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=40, unique=True, validators=[validate_phone_number, ])
     image = models.ImageField(upload_to='images/users/', validators=[
         FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'svg', 'webp', 'heic', 'heif', 'avif']),
@@ -61,8 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-
-    USERNAME_FIELD = "login"
+    USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ['full_name', 'phone_number', 'role']
     objects = UserManager()
 
@@ -78,5 +75,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = 'user'
-
-

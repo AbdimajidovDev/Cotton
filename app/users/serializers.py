@@ -5,20 +5,20 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 class LoginSerializer(serializers.Serializer):
-    login = serializers.CharField(write_only=True)
+    username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        login = attrs.get("login")
+        username = attrs.get("username")
         password = attrs.get("password")
 
-        if not login or not password:
-            raise ValidationError("Enter login and password. Please!")
+        if not username or not password:
+            raise ValidationError("Enter username and password. Please!")
 
-        user = authenticate(username=login, password=password)
+        user = authenticate(username=username, password=password)
 
         if not user:
-            raise ValidationError("Invalid login or password.")
+            raise ValidationError("Invalid username or password.")
 
         if not user.is_active:
             raise ValidationError("User is inactive.")
