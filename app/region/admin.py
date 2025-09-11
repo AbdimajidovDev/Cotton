@@ -33,7 +33,7 @@ class NeighborhoodAdmin(admin.ModelAdmin):
 
 @admin.register(Farm)
 class FarmAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "massive_name", "INN", "phone_number", "region", "district")
+    list_display = ("full_name", "massive_name", "INN", "phone_number", "region", "district", "cotton_area")
     list_filter = ("region", "district", "massive")
     search_fields = ("full_name", "INN", "phone_number")
 
