@@ -42,11 +42,21 @@ class Neighborhood(models.Model):
     massive = models.ForeignKey(Massive, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255, blank=True, null=True)
-    crop_area = models.DecimalField(max_digits=20, decimal_places=2)
+    crop_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+
+
+class NeighborhoodExcelUpload(models.Model):
+    file = models.FileField(upload_to="uploads/neighborhood/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Excel: {self.file.name}"
+
 
 
 class Farm(models.Model):

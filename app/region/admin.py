@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Region, District, Massive, Neighborhood, Farm
+from .models import Region, District, Massive, Neighborhood, Farm, NeighborhoodExcelUpload
 from .models import FarmExcelUpload
-from .utils import import_farm_from_excel
+from .utils import import_farm_from_excel, import_neighborhood_from_excel
 
 
 @admin.register(Region)
@@ -48,6 +48,24 @@ class FarmExcelUploadAdmin(admin.ModelAdmin):
         if obj.file:
             try:
                 import_farm_from_excel(obj.file.path)
+            except Exception as e:
+                self.message_user(
+                    request,
+                    f"Excel fayldan ma’lumot import qilishda xatolik yuz berdi: {e}",
+                    level='error'
+                )
+
+
+@admin.register(NeighborhoodExcelUpload)
+class NeighborhoodExcelUploadAdmin(admin.ModelAdmin):
+    list_display = ("file", "uploaded_at")
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if obj.file:
+            try:
+                import_neighborhood_from_excel(obj.file.path)
             except Exception as e:
                 self.message_user(
                     request,
