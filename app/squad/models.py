@@ -23,9 +23,7 @@ class Squad(models.Model):
     squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads')
     shtab = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads_as_shtab')
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
-    picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
-    phone_number = models.CharField(max_length=255, blank=True, null=True)
-    workers_count = models.IntegerField()
+    workers_count = models.IntegerField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
