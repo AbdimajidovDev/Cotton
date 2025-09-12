@@ -11,7 +11,8 @@ from .models import (
 )
 from .serializers import (
     SquadSerializer, SquadDailySerializer, WorkerSerializer, WorkerDailySerializer,
-    TerritorySerializer, ScalesmanSerializer, CottonPickerSerializer, CarDailySerializer, StartSquadDailySerializer, EndSquadDailySerializer
+    TerritorySerializer, ScalesmanSerializer, CottonPickerSerializer, CarDailySerializer, StartSquadDailySerializer,
+    EndSquadDailySerializer
 )
 
 
@@ -67,8 +68,8 @@ class SquadDailyAPI(APIView):
     def post(self, request):
         serializer = SquadDailySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            obj = serializer.save()
+            return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -98,20 +99,22 @@ class SquadDailyDetailAPI(APIView):
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyStartAPI(APIView):
     serializer_class = StartSquadDailySerializer
-    def post(self, request, pk):
-        obj = get_object_or_404(SquadDailyPicking, pk=pk)
-        if obj.start_time:
-            return Response({"detail": "This daily picking already started"}, status=status.HTTP_400_BAD_REQUEST)
 
-        obj.start_time = timezone.now()
-        obj.status = SquadDailyPicking.Status.active
-        obj.save()
-        return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
+    def post(self, request):
+        serializer = StartSquadDailySerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            obj.start_time = timezone.now()
+            obj.status = SquadDailyPicking.Status.active
+            obj.save()
+            return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyEndAPI(APIView):
     serializer_class = EndSquadDailySerializer
+
     def post(self, request, pk):
         obj = get_object_or_404(SquadDailyPicking, pk=pk)
 
