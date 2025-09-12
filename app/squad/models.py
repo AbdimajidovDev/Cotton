@@ -48,7 +48,7 @@ class SquadDailyPicking(models.Model):
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.active)
     farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, null=True, blank=True)
-    masse = models.FloatField()
+    masse = models.FloatField(null=True, blank=True)
     picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
     picked_area = models.FloatField()
     workers_count = models.IntegerField()
