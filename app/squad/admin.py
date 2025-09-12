@@ -1,32 +1,13 @@
-# from django.contrib import admin
-# from django.contrib.admin import StackedInline
-#
-# from app.squad.models import *
-#
-#
-# class SquadDailyPickingAdmin(StackedInline):
-#     model = SquadDailyPicking
-#     extra = 1
-#
-# @admin.register(Squad)
-# class SquadAdmin(admin.ModelAdmin):
-#     list_display = ('squad_number', 'user', 'neighborhood', 'farm', 'picking_type', 'workers_count')
-#     inlines = (SquadDailyPickingAdmin,)
-#
-#
-# # @admin.register(SquadDailyPicking)
-# # class SquadDailyPickingAdmin(admin.ModelAdmin):
-# #     model = SquadDailyPicking
-
-
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin import StackedInline
+from django.utils.html import format_html
 
 from app.squad.models import (
     Squad, SquadDailyPicking, Worker, WorkerDailyPicking,
     Territory, Scalesman, CottonPicker, CarDailyPicking,
-    Shtab, PickingType, SquadNumber, PQQM
+    Shtab, PickingType, SquadNumber, PQQM, SquadExcelUpload
 )
+from .utils import import_squad_from_excel
 
 
 # ========================= Inline Admins =========================
@@ -71,7 +52,7 @@ class CarDailyPickingInline(StackedInline):
 @admin.register(Squad)
 class SquadAdmin(admin.ModelAdmin):
     list_display = ("squad_number", "user", "neighborhood", "picking_type", "workers_count")
-    search_fields = ("squad_number__number", "user__first_name", "user__last_name")
+    search_fields = ("squad_number__number", "user__full_name")
     list_filter = ("picking_type", "neighborhood")
     inlines = [SquadDailyPickingInline, WorkerInline, TerritoryInline]
 
@@ -99,7 +80,7 @@ class CottonPickerAdmin(admin.ModelAdmin):
 @admin.register(Shtab)
 class ShtabAdmin(admin.ModelAdmin):
     list_display = ("squad_number", "farm", "massive", "picking_type", "workers_count", "created_at")
-    search_fields = ("squad_number__number",)
+    search_fields = ("squad_number__number", "farm__full_name", "massive__name")
 
 
 @admin.register(PickingType)
@@ -120,3 +101,27 @@ class PQQMAdmin(admin.ModelAdmin):
 @admin.register(Scalesman)
 class ScalesmanAdmin(admin.ModelAdmin):
     list_display = ("farm", "squad_number", "weight_checked", "tech_number", "created_at")
+
+
+# ========================= Excel Upload Admin =========================
+
+@admin.register(SquadExcelUpload)
+class SquadExcelUploadAdmin(admin.ModelAdmin):
+    list_display = ("file", "uploaded_at", "import_result")
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        try:
+            result = import_squad_from_excel(obj.file.path)
+            messages.success(
+                request,
+                f"✅ Import tugadi! {result['created']} yangi squad, {result['updated']} yangilangan, "
+                f"{result['skipped']} o'tkazib yuborildi."
+            )
+        except Exception as e:
+            messages.error(request, f"❌ Importda xatolik: {str(e)}")
+
+    def import_result(self, obj):
+        return format_html("<span style='color: green;'>✔️ So‘nggi yuklash muvaffaqiyatli</span>")
+
+    import_result.short_description = "Import natijasi"

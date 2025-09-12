@@ -85,7 +85,7 @@ def import_user_from_excel(file_path):
                 defaults={
                     "username": generate_username(full_name),
                     "full_name": full_name,
-                    "role": User.UserRoles.NEIGHBORHOOD,
+                    "role": User.UserRoles.SQUAD,  # Qanaqa rol kerak bolsa oshani yozib ket
                     "password": hash_password,
                 },
             )

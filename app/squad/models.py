@@ -6,13 +6,17 @@ from app.users.models import User
 
 class PickingType(models.Model):
     name = models.CharField(max_length=100)
+
     def __str__(self):
         return self.name
 
+
 class SquadNumber(models.Model):
     number = models.IntegerField()
+
     def __str__(self):
         return str(self.number)
+
 
 class Squad(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -26,6 +30,14 @@ class Squad(models.Model):
 
     def __str__(self):
         return f"Otryad: {self.squad_number.number}"
+
+
+class SquadExcelUpload(models.Model):
+    file = models.FileField(upload_to="uploads/squad/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Excel: {self.file.name}"
 
 
 class SquadDailyPicking(models.Model):
@@ -75,11 +87,13 @@ class Territory(models.Model):
     def __str__(self):
         return self.name
 
+
 class PQQM(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
+
 
 class Scalesman(models.Model):
     pqqm_id = models.ForeignKey(PQQM, on_delete=models.SET_NULL, blank=True, null=True)
