@@ -14,19 +14,19 @@ class SquadSerializer(serializers.ModelSerializer):
 class FarmMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Farm
-        fields = ['id', 'full_name']
+        fields = ['full_name']
 
 
 class DistrictMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class MassiveMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Massive
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class SquadNestedSerializer(serializers.ModelSerializer):
