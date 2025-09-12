@@ -1,3 +1,4 @@
+from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -92,6 +93,37 @@ class SquadDailyDetailAPI(APIView):
         obj = get_object_or_404(SquadDailyPicking, pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(tags=['SquadDaily'])
+class SquadDailyStartAPI(APIView):
+    def post(self, request, pk):
+        obj = get_object_or_404(SquadDailyPicking, pk=pk)
+        if obj.start_time:
+            return Response({"detail": "This daily picking already started"}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj.start_time = timezone.now()
+        obj.status = SquadDailyPicking.Status.active
+        obj.save()
+        return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=['SquadDaily'])
+class SquadDailyEndAPI(APIView):
+    def post(self, request, pk):
+        obj = get_object_or_404(SquadDailyPicking, pk=pk)
+
+        if not obj.start_time:
+            return Response({"detail": "Start time not set yet."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if obj.end_time:
+            return Response({"detail": "End time already set."}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj.end_time = timezone.now()
+        obj.status = SquadDailyPicking.Status.finished
+        obj.save()
+
+        return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=['Worker'])
