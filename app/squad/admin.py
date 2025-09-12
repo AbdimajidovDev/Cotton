@@ -70,9 +70,9 @@ class CarDailyPickingInline(StackedInline):
 
 @admin.register(Squad)
 class SquadAdmin(admin.ModelAdmin):
-    list_display = ("squad_number", "user", "neighborhood", "farm", "picking_type", "workers_count")
+    list_display = ("squad_number", "user", "neighborhood", "picking_type", "workers_count")
     search_fields = ("squad_number__number", "user__first_name", "user__last_name")
-    list_filter = ("picking_type", "neighborhood", "farm")
+    list_filter = ("picking_type", "neighborhood")
     inlines = [SquadDailyPickingInline, WorkerInline, TerritoryInline]
 
 

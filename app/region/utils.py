@@ -76,6 +76,8 @@ def import_farm_from_excel(file_path):
 
 # --------------------------------------------------------------------
 
+# Mahallani exel orqali qo'shish uchun funksiya
+
 def import_neighborhood_from_excel(file_path):
     all_rows = pd.read_excel(file_path, header=None)
     total_rows = len(all_rows)
@@ -111,20 +113,28 @@ def import_neighborhood_from_excel(file_path):
             name = str(row.get("name", "")).strip()
             full_name = str(row.get("full_name", "")).strip()
 
-            if full_name:
-                user = User.objects.get(full_name=full_name)
+            # ✅ User topish
+            user = User.objects.filter(full_name=full_name).first() if full_name else None
 
-            if massive_name:
-                massive = Massive.objects.filter(name=massive_name).first()
+            # ✅ Massive topish
+            massive = Massive.objects.filter(name=massive_name).first()
+            if not massive:
+                raise ValueError(f"Massive topilmadi: {massive_name}")
 
+            # ✅ Phone number
+            phone_number = user.phone_number if user else None
 
+            print('massive_name', massive_name)
+            print('full_name', full_name)
+            print('name', name)
+            print('user', user)
+
+            # ✅ Lookup => massive + name orqali
             neighborhood, created = Neighborhood.objects.update_or_create(
-                defaults={
-                    "user": user,
-                    "massive": massive,
-                    "name": name,
-                    "phone_number": user.phone_number,
-                },
+                massive=massive,
+                name=name,
+                user=user,
+                phone_number=phone_number,
             )
 
             if created:
@@ -132,5 +142,6 @@ def import_neighborhood_from_excel(file_path):
             else:
                 updated_count += 1
 
-    print(f"{created_count} ta yangi user yaratildi, {updated_count} ta user yangilandi.")
+
+    print(f"{created_count} ta yangi mahalla yaratildi, {updated_count} ta mahalla yangilandi.")
     return {"created": created_count, "updated": updated_count}

@@ -19,7 +19,6 @@ class Squad(models.Model):
     squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True)
     shtab = models.ForeignKey('Shtab', on_delete=models.SET_NULL, null=True, blank=True)
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
     phone_number = models.CharField(max_length=255, blank=True, null=True)
     workers_count = models.IntegerField()
@@ -36,8 +35,10 @@ class SquadDailyPicking(models.Model):
 
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.active)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
     masse = models.FloatField()
     picked_area = models.FloatField()
+    workers_count = models.IntegerField()
     start_time = models.DateField()
     end_time = models.DateField()
     created_at = models.DateField(auto_now_add=True)
