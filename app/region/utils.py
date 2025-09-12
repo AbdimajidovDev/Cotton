@@ -5,7 +5,6 @@ from ..users.models import User
 
 
 def import_farm_from_excel(file_path):
-    # Fayldagi sarlavhani topish uchun birinchi 10 qatorni tekshiramiz
     for header_row in range(10):
         df = pd.read_excel(file_path, header=header_row)
         df = df.loc[:, ~df.columns.str.contains('^Unnamed', case=False)]
@@ -14,7 +13,6 @@ def import_farm_from_excel(file_path):
     else:
         raise ValueError("Excel faylda kerakli sarlavha topilmadi!")
 
-    # ustunlarni tozalash
     df.columns = df.columns.str.strip().str.lower().str.replace(u'\xa0', ' ')
     print("Topilgan ustunlar:", df.columns.tolist())
 
@@ -32,17 +30,14 @@ def import_farm_from_excel(file_path):
             if not inn:
                 continue
 
-            # Excel'dan massiv nomini olish
             massive_name = str(row.get("massive_name", "")).strip()
 
-            # Bazadan massivni qidiramiz
             massive_obj = None
             if massive_name:
                 massive_obj, _ = Massive.objects.get_or_create(
                     name=massive_name,
                     defaults={
-                        # bu yerda agar kerak bo‘lsa District/plan/crop_area ham to‘ldirish mumkin
-                        "district": District.objects.first(),  # vaqtincha birinchi District
+                        "district": District.objects.first(),
                         "plan": 0,
                         "crop_area": 0
                     }
@@ -53,8 +48,8 @@ def import_farm_from_excel(file_path):
             farm, created = Farm.objects.update_or_create(
                 INN=inn,
                 defaults={
-                    "region": Region.objects.first(),     # vaqtincha birinchi Region
-                    "district": District.objects.first(), # vaqtincha birinchi District
+                    "region": Region.objects.first(),
+                    "district": District.objects.first(),
                     "massive": massive_obj,
                     "massive_name": massive_name,
                     "full_name": str(row.get("full_name", "")).strip(),
@@ -74,15 +69,10 @@ def import_farm_from_excel(file_path):
     return {"created": created_count, "updated": updated_count}
 
 
-# --------------------------------------------------------------------
-
-# Mahallani exel orqali qo'shish uchun funksiya
-
 def import_neighborhood_from_excel(file_path):
     all_rows = pd.read_excel(file_path, header=None)
     total_rows = len(all_rows)
 
-    # Fayldagi sarlavhani topish uchun birinchi 10 qatorni tekshiramiz
     for header_row in range(min(total_rows, 10)):
         df = pd.read_excel(file_path, header=header_row)
         df = df.loc[:, ~df.columns.str.contains('^Unnamed', case=False)]
@@ -90,7 +80,7 @@ def import_neighborhood_from_excel(file_path):
         print("Excel ustunlari:", df.columns.tolist())
         print("Birinchi qator:", df.head(1).to_dict())
 
-        if len(df.columns) >= 3:  # ustunlar soni
+        if len(df.columns) >= 3:
             break
     else:
         raise ValueError("Excel faylda kerakli sarlavha topilmadi!")
@@ -113,15 +103,12 @@ def import_neighborhood_from_excel(file_path):
             name = str(row.get("name", "")).strip()
             full_name = str(row.get("full_name", "")).strip()
 
-            # ✅ User topish
             user = User.objects.filter(full_name=full_name).first() if full_name else None
 
-            # ✅ Massive topish
             massive = Massive.objects.filter(name=massive_name).first()
             if not massive:
                 raise ValueError(f"Massive topilmadi: {massive_name}")
 
-            # ✅ Phone number
             phone_number = user.phone_number if user else None
 
             print('massive_name', massive_name)
@@ -129,7 +116,6 @@ def import_neighborhood_from_excel(file_path):
             print('name', name)
             print('user', user)
 
-            # ✅ Lookup => massive + name orqali
             neighborhood, created = Neighborhood.objects.update_or_create(
                 massive=massive,
                 name=name,
@@ -141,7 +127,6 @@ def import_neighborhood_from_excel(file_path):
                 created_count += 1
             else:
                 updated_count += 1
-
 
     print(f"{created_count} ta yangi mahalla yaratildi, {updated_count} ta mahalla yangilandi.")
     return {"created": created_count, "updated": updated_count}
