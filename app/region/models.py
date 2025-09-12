@@ -60,9 +60,9 @@ class NeighborhoodExcelUpload(models.Model):
 
 
 class Farm(models.Model):
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, blank=True, null=True)
-    district = models.ForeignKey(District, on_delete=models.SET_NULL, blank=True, null=True)
-    massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, blank=True, null=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, blank=True, null=True, related_name='farms')
+    district = models.ForeignKey(District, on_delete=models.SET_NULL, blank=True, null=True, related_name='farms')
+    massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, blank=True, null=True, related_name='farms')
     massive_name = models.CharField(max_length=255)
     full_name = models.CharField(max_length=255)
     location = models.CharField(max_length=255, blank=True, null=True)

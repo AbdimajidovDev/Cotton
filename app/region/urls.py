@@ -5,7 +5,7 @@ from .views import (
     DistrictAPI, DistrictDetailAPI,
     MassiveAPI, MassiveDetailAPI,
     NeighborhoodAPI, NeighborhoodDetailAPI,
-    FarmAPI, FarmDetailAPI
+    FarmAPI, FarmDetailAPI, FarmByMassiveAPI
 )
 
 app_name = 'region'
@@ -19,6 +19,7 @@ urlpatterns = [
 
     path("massives/", MassiveAPI.as_view(), name="massive-list-create"),
     path("massives/<int:pk>/", MassiveDetailAPI.as_view(), name="massive-detail"),
+    path("massives/<int:pk>/farms/", FarmByMassiveAPI.as_view(), name="massive-detail"),
 
     path("neighborhoods/", NeighborhoodAPI.as_view(), name="neighborhood-list-create"),
     path("neighborhoods/<int:pk>/", NeighborhoodDetailAPI.as_view(), name="neighborhood-detail"),

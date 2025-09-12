@@ -9,6 +9,12 @@ class RegionSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at',)
 
 
+class FarmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Farm
+        fields = '__all__'
+
+
 class MassiveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Massive
@@ -37,8 +43,3 @@ class NeighborhoodSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_at',)
 
-
-class FarmSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Farm
-        fields = '__all__'

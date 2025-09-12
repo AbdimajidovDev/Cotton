@@ -46,6 +46,17 @@ class RegionDetailAPI(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=['Massive'])
+class FarmByMassiveAPI(APIView):
+    serializer_class = FarmSerializer
+
+    def get(self, request, pk):
+        massive = get_object_or_404(Massive, pk=pk)
+        farms = massive.farms.all()
+        serializer = FarmSerializer(farms, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @extend_schema(tags=['Farm'])
 class FarmAPI(APIView):
     serializer_class = FarmSerializer
