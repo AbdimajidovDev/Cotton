@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Squad, SquadDailyPicking, Worker, WorkerDailyPicking, Territory, Scalesman, CottonPicker, \
     CarDailyPicking
+from ..region.models import Farm, District, Massive
 
 
 class SquadSerializer(serializers.ModelSerializer):
@@ -10,25 +11,60 @@ class SquadSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at',)
 
 
-class SquadDailySerializer(serializers.ModelSerializer):
+class FarmMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Farm
+        fields = ['id', 'full_name']
+
+
+class DistrictMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = ['id', 'name']
+
+
+class MassiveMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Massive
+        fields = ['id', 'name']
+
+
+class SquadNestedSerializer(serializers.ModelSerializer):
+    squad_number = serializers.IntegerField(source='squad.squad_number.number')
+
     class Meta:
         model = SquadDailyPicking
-        fields = '__all__'
-        read_only_fields = ('created_at',)
+        fields = ['squad_number']
+
+
+class SquadDailySerializer(serializers.ModelSerializer):
+    squad = SquadNestedSerializer(read_only=True)
+    farm = FarmMinimalSerializer(read_only=True)
+    district = DistrictMinimalSerializer(read_only=True)
+    massive = MassiveMinimalSerializer(read_only=True)
+
+    class Meta:
+        model = SquadDailyPicking
+        fields = [
+            "id", "squad", "status", "farm", "district", "massive",
+            "masse", "picking_type", "picked_area", "workers_count",
+            "start_time", "end_time", "created_at"
+        ]
+        read_only_fields = ["created_at", "start_time", "end_time"]
 
 
 class StartSquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
-        fields = "workers_count", "farm", "picking_type", "start_time"
-        read_only_fields = ["start_time", "end_time", "created_at"]
+        fields = ["workers_count", "farm", "picking_type"]
+        read_only_fields = ["start_time", "end_time", "created_at", "status"]
 
 
 class EndSquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
-        fields = "picked_area", "masse", "end_time"
-        read_only_fields = ["start_time", "end_time", "created_at"]
+        fields = ["picked_area", "masse"]
+        read_only_fields = ["start_time", "end_time", "created_at", "status"]
 
 
 class WorkerSerializer(serializers.ModelSerializer):

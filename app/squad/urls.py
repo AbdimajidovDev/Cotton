@@ -18,7 +18,7 @@ urlpatterns = [
 
     path("squad-daily/", SquadDailyAPI.as_view(), name="squad-daily-list"),
     path("squad-daily/<int:pk>/", SquadDailyDetailAPI.as_view(), name="squad-daily-detail"),
-    path('squad-daily/<int:pk>/start/', SquadDailyStartAPI.as_view()),
+    path('squad-daily/start/', SquadDailyStartAPI.as_view()),
     path('squad-daily/<int:pk>/end/', SquadDailyEndAPI.as_view()),
 
     path("workers/", WorkerAPI.as_view(), name="worker-list"),
