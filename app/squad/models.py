@@ -19,9 +19,9 @@ class SquadNumber(models.Model):
 
 
 class Squad(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True)
-    shtab = models.ForeignKey('Shtab', on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads')
+    squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads')
+    shtab = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads_as_shtab')
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
     picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
     phone_number = models.CharField(max_length=255, blank=True, null=True)
