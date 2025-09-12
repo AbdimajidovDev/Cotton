@@ -38,7 +38,7 @@ class SquadNestedSerializer(serializers.ModelSerializer):
 
 
 class SquadDailySerializer(serializers.ModelSerializer):
-    squad = SquadNestedSerializer(read_only=True)
+    # squad = SquadNestedSerializer(read_only=True)
     farm = FarmMinimalSerializer(read_only=True)
     district = DistrictMinimalSerializer(read_only=True)
     massive = MassiveMinimalSerializer(read_only=True)
@@ -51,6 +51,14 @@ class SquadDailySerializer(serializers.ModelSerializer):
             "start_time", "end_time", "created_at"
         ]
         read_only_fields = ["created_at", "start_time", "end_time"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        print('data', data)
+        data['squad_number'] = instance.squad_number.number
+        return data
+
+
 
 
 class StartSquadDailySerializer(serializers.ModelSerializer):
