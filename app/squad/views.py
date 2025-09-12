@@ -11,7 +11,7 @@ from .models import (
 )
 from .serializers import (
     SquadSerializer, SquadDailySerializer, WorkerSerializer, WorkerDailySerializer,
-    TerritorySerializer, ScalesmanSerializer, CottonPickerSerializer, CarDailySerializer
+    TerritorySerializer, ScalesmanSerializer, CottonPickerSerializer, CarDailySerializer, StartSquadDailySerializer, EndSquadDailySerializer
 )
 
 
@@ -97,6 +97,7 @@ class SquadDailyDetailAPI(APIView):
 
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyStartAPI(APIView):
+    serializer_class = StartSquadDailySerializer
     def post(self, request, pk):
         obj = get_object_or_404(SquadDailyPicking, pk=pk)
         if obj.start_time:
@@ -110,6 +111,7 @@ class SquadDailyStartAPI(APIView):
 
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyEndAPI(APIView):
+    serializer_class = EndSquadDailySerializer
     def post(self, request, pk):
         obj = get_object_or_404(SquadDailyPicking, pk=pk)
 

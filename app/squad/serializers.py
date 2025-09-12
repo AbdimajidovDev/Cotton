@@ -14,6 +14,20 @@ class SquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
         fields = '__all__'
+        read_only_fields = ('created_at',)
+
+
+class StartSquadDailySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SquadDailyPicking
+        fields = "workers_count", "farm", "picking_type", "start_time"
+        read_only_fields = ["start_time", "end_time", "created_at"]
+
+
+class EndSquadDailySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SquadDailyPicking
+        fields = "picked_area", "masse", "end_time"
         read_only_fields = ["start_time", "end_time", "created_at"]
 
 
