@@ -101,14 +101,24 @@ class SquadDailyStartAPI(APIView):
     serializer_class = StartSquadDailySerializer
 
     def post(self, request):
-        serializer = StartSquadDailySerializer(data=request.data)
-        if serializer.is_valid():
-            obj = serializer.save()
-            obj.start_time = timezone.now()
-            obj.status = SquadDailyPicking.Status.active
-            obj.save()
-            return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        squad_id = request.data.get('squad')
+        if not squad_id:
+            return Response({"detail": "Squad id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj = SquadDailyPicking.objects.filter(squad_id=squad_id, status=SquadDailyPicking.Status.active).last()
+
+        if not obj:
+            return Response({"detail": "No pending SquadDailyPicking found for this squad."},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        if obj.start_time:
+            return Response({"detail": "Already started."}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj.start_time = timezone.now()
+        obj.status = SquadDailyPicking.Status.active
+        obj.save()
+
+        return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=['SquadDaily'])
