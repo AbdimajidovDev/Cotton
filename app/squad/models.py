@@ -50,7 +50,7 @@ class SquadDailyPicking(models.Model):
     farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, null=True, blank=True)
     masse = models.FloatField(null=True, blank=True)
     picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
-    picked_area = models.FloatField()
+    picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     workers_count = models.IntegerField()
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
@@ -83,7 +83,7 @@ class WorkerDailyPicking(models.Model):
 class Territory(models.Model):
     name = models.CharField(max_length=255)
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
-    picked_area = models.FloatField()
+    picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -121,7 +121,7 @@ class CottonPicker(models.Model):
 class CarDailyPicking(models.Model):
     cotton_picker = models.ForeignKey(CottonPicker, on_delete=models.CASCADE)
     fuel = models.FloatField()
-    picked_area = models.FloatField()
+    picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     cotton_masse = models.FloatField()
     start_date = models.DateField()
     end_date = models.DateField()
