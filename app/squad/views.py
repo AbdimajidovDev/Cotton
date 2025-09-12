@@ -1,5 +1,6 @@
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -99,26 +100,25 @@ class SquadDailyDetailAPI(APIView):
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyStartAPI(APIView):
     serializer_class = StartSquadDailySerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        squad_id = request.data.get('squad')
-        if not squad_id:
-            return Response({"detail": "Squad id is required."}, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
 
-        obj = SquadDailyPicking.objects.filter(squad_id=squad_id, status=SquadDailyPicking.Status.active).last()
+        squad_instance = Squad.objects.filter(user=user).first()
+        if not squad_instance:
+            return Response({"detail": "User does not belong to any squad"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not obj:
-            return Response({"detail": "No pending SquadDailyPicking found for this squad."},
-                            status=status.HTTP_404_NOT_FOUND)
+        serializer = StartSquadDailySerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save(squad=squad_instance)
+            obj.start_time = timezone.now()
+            obj.status = SquadDailyPicking.Status.active
+            obj.save()
 
-        if obj.start_time:
-            return Response({"detail": "Already started."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
 
-        obj.start_time = timezone.now()
-        obj.status = SquadDailyPicking.Status.active
-        obj.save()
-
-        return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=['SquadDaily'])
