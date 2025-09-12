@@ -97,10 +97,10 @@ class PQQM(models.Model):
 
 
 class Scalesman(models.Model):
-    pqqm_id = models.ForeignKey(PQQM, on_delete=models.SET_NULL, blank=True, null=True)
+    pqqm = models.ForeignKey(PQQM, on_delete=models.SET_NULL, blank=True, null=True, related_name='pqqms')
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
-    squad_number = models.ForeignKey(Squad, on_delete=models.CASCADE)
-    weight_checked = models.FloatField()
+    squad_number = models.ForeignKey(SquadNumber, on_delete=models.CASCADE)
+    weight_checked = models.DecimalField(max_digits=20, decimal_places=2)
     tech_number = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
 

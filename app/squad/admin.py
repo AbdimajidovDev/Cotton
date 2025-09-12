@@ -100,7 +100,7 @@ class PQQMAdmin(admin.ModelAdmin):
 
 @admin.register(Scalesman)
 class ScalesmanAdmin(admin.ModelAdmin):
-    list_display = ("farm", "squad_number", "weight_checked", "tech_number", "created_at")
+    list_display = ("pqqm", "farm", "squad_number", "weight_checked", "tech_number", "created_at")
 
 
 # ========================= Excel Upload Admin =========================
