@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema
-from .serializers import RegionSerializer, DistrictSerializer, MassiveSerializer, NeighborhoodSerializer, FarmSerializer
+from .serializers import RegionSerializer, DistrictSerializer, MassiveSerializer, NeighborhoodSerializer, \
+    FarmSerializer, DistrictGetSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -45,6 +46,17 @@ class RegionDetailAPI(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=['Massive'])
+class FarmByMassiveAPI(APIView):
+    serializer_class = FarmSerializer
+
+    def get(self, request, pk):
+        massive = get_object_or_404(Massive, pk=pk)
+        farms = massive.farms.all()
+        serializer = FarmSerializer(farms, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @extend_schema(tags=['Farm'])
 class FarmAPI(APIView):
     serializer_class = FarmSerializer
@@ -85,14 +97,16 @@ class FarmDetailAPI(APIView):
 
 @extend_schema(tags=['District'])
 class DistrictAPI(APIView):
-    serializer_class = DistrictSerializer
+    serializer_class = DistrictGetSerializer
+
     def get(self, request):
         districts = District.objects.all()
-        serializer = DistrictSerializer(districts, many=True)
+        serializer = DistrictGetSerializer(districts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = DistrictSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -9,11 +9,10 @@ class RegionSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at',)
 
 
-class DistrictSerializer(serializers.ModelSerializer):
+class FarmSerializer(serializers.ModelSerializer):
     class Meta:
-        model = District
+        model = Farm
         fields = '__all__'
-        read_only_fields = ('created_at',)
 
 
 class MassiveSerializer(serializers.ModelSerializer):
@@ -23,14 +22,24 @@ class MassiveSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at',)
 
 
+class DistrictGetSerializer(serializers.ModelSerializer):
+    massives = MassiveSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = District
+        fields = ('id', 'user', 'region', 'name', 'plan', 'crop_area', 'created_at', 'massives')
+        extra_kwargs = {'created_at': {'read_only': True}}
+
+class DistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = ('id', 'user', 'region', 'name', 'plan', 'crop_area', 'created_at')
+        read_only_fields = ('created_at',)
+
+
 class NeighborhoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Neighborhood
         fields = '__all__'
         read_only_fields = ('created_at',)
 
-
-class FarmSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Farm
-        fields = '__all__'
