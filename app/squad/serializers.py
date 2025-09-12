@@ -55,7 +55,7 @@ class SquadDailySerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         print('data', data)
-        data['squad_number'] = instance.squad_number.number
+        data['squad_number'] = instance.squad.squad_number
         return data
 
 
