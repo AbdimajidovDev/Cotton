@@ -27,6 +27,10 @@ class LoginSerializer(serializers.Serializer):
         attrs["user"] = user
         return attrs
 
+    def to_representation(self, instance):
+        user = instance.get("user")
+        return MeSerializer(user).data
+
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
@@ -50,11 +54,25 @@ class MeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "full_name", "username", "phone_number", "image", "role")
-
         extra_kwargs = {
             "id": {"read_only": True},
-            "phone_number": {'read_only': True},
+            "phone_number": {"read_only": True},
         }
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        if instance.role == User.UserRoles.SQUAD:
+            squads = instance.squads.all()
+            data["squads"] = [
+                {
+                    "id": squad.id,
+                    "squad_number": squad.squad_number.number if squad.squad_number else None,
+                }
+                for squad in squads
+            ]
+
+        return data
 
     def validate_full_name(self, value):
         if len(value) <= 3:
@@ -62,11 +80,10 @@ class MeSerializer(serializers.ModelSerializer):
         return value
 
     def update(self, instance, validated_data):
-        instance.full_name = validated_data.get('full_name', instance.full_name)
-        instance.username = validated_data.get('username', instance.username)
-        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
-        instance.image = validated_data.get('image', instance.image)
-        instance.role = validated_data.get('role', instance.role)
+        instance.full_name = validated_data.get("full_name", instance.full_name)
+        instance.username = validated_data.get("username", instance.username)
+        instance.phone_number = validated_data.get("phone_number", instance.phone_number)
+        instance.image = validated_data.get("image", instance.image)
+        instance.role = validated_data.get("role", instance.role)
         instance.save()
-
         return instance
