@@ -93,7 +93,6 @@ def import_neighborhood_from_excel(file_path):
     else:
         raise ValueError("Excel faylda kerakli sarlavha topilmadi!")
 
-    # ustunlarni tozalash
     df.columns = df.columns.str.strip().str.lower().str.replace(u'\xa0', ' ')
 
     required_columns = ["massive_name", "name", "full_name"]
