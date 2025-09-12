@@ -1,6 +1,5 @@
 from django.urls import path
 
-
 from .views import (
     SquadAPI, SquadDetailAPI,
     SquadDailyAPI, SquadDailyDetailAPI,
@@ -8,7 +7,7 @@ from .views import (
     TerritoryAPI, TerritoryDetailAPI,
     ScalesmanAPI, ScalesmanDetailAPI,
     CottonPickerAPI, CottonPickerDetailAPI,
-    CarDailyAPI, CarDailyDetailAPI, WorkerDetailAPI
+    CarDailyAPI, CarDailyDetailAPI, WorkerDetailAPI, SquadDailyStartAPI, SquadDailyEndAPI
 )
 
 app_name = 'squad'
@@ -19,6 +18,8 @@ urlpatterns = [
 
     path("squad-daily/", SquadDailyAPI.as_view(), name="squad-daily-list"),
     path("squad-daily/<int:pk>/", SquadDailyDetailAPI.as_view(), name="squad-daily-detail"),
+    path('squad-daily/<int:pk>/start/', SquadDailyStartAPI.as_view()),
+    path('squad-daily/<int:pk>/end/', SquadDailyEndAPI.as_view()),
 
     path("workers/", WorkerAPI.as_view(), name="worker-list"),
     path("workers/<int:pk>/", WorkerDetailAPI.as_view(), name="worker-detail"),
@@ -38,4 +39,3 @@ urlpatterns = [
     path("car-daily/", CarDailyAPI.as_view(), name="car-daily-list"),
     path("car-daily/<int:pk>/", CarDailyDetailAPI.as_view(), name="car-daily-detail"),
 ]
-

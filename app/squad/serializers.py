@@ -14,7 +14,7 @@ class SquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
         fields = '__all__'
-        read_only_fields = ('created_at',)
+        read_only_fields = ["start_time", "end_time", "created_at"]
 
 
 class WorkerSerializer(serializers.ModelSerializer):

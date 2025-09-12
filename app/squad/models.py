@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.region.models import Neighborhood, Farm, Massive
+from app.region.models import Neighborhood, Farm, Massive, District
 from app.users.models import User
 
 
@@ -43,18 +43,20 @@ class SquadDailyPicking(models.Model):
         active = "a", "active"
         finished = "f", "finished"
 
+    district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
+    massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, null=True, blank=True)
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.active)
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
+    farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, null=True, blank=True)
     masse = models.FloatField()
     picked_area = models.FloatField()
     workers_count = models.IntegerField()
-    start_time = models.DateField()
-    end_time = models.DateField()
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.squad.squad_number
+        return str(self.squad.squad_number)
 
 
 class Worker(models.Model):
