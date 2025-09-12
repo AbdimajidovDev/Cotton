@@ -45,21 +45,23 @@ def import_squad_from_excel(file_path):
     #         if number:
     #             squad_number = SquadNumber.objects.filter(squad_number=number).first()
     #
-    #         massie = Massive.objects.filter(name=massive_name).first()v
+    #         neighborhood = Neighborhood.objects.filter(name=massive_name).first()
     #         if not massive:
     #             raise ValueError(f"Massive topilmadi: {massive_name}")
     #
     #         phone_number = user.phone_number if user else None
     #
-    #         print('massive_name', massive_name)
     #         print('full_name', full_name)
     #         print('name', name)
     #         print('user', user)
+    #         print('squad_number', squad_number)
+    #         print('Neighborhood', neighborhood)
+    #         print('phone_number', phone_number)
     #
-    #         neighborhood, created = Neighborhood.objects.update_or_create(
-    #             massive=massive,
-    #             name=name,
+    #         squad, created = Squad.objects.update_or_create(
     #             user=user,
+    #             squad_number=squad_number,
+    #             neighborhood=neighborhood,
     #             phone_number=phone_number,
     #         )
     #
