@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class Region(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name='regions')
     name = models.CharField(max_length=255)
     plan = models.DecimalField(max_digits=20, decimal_places=2)
     crop_area = models.DecimalField(max_digits=20, decimal_places=2)
@@ -14,8 +14,8 @@ class Region(models.Model):
 
 
 class District(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name='districts')
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')
     name = models.CharField(max_length=255)
     plan = models.DecimalField(max_digits=20, decimal_places=2)
     crop_area = models.DecimalField(max_digits=20, decimal_places=2)
@@ -26,8 +26,8 @@ class District(models.Model):
 
 
 class Massive(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name='massives')
+    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name='massives')
     name = models.CharField(max_length=255)
     plan = models.DecimalField(max_digits=20, decimal_places=2)
     crop_area = models.DecimalField(max_digits=20, decimal_places=2)
