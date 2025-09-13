@@ -110,18 +110,14 @@ class SquadDailyStartAPI(APIView):
 
     def post(self, request):
         user = request.user
-
         squad_instance = Squad.objects.filter(user=user).first()
         if not squad_instance:
             return Response({"detail": "User does not belong to any squad"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = StartSquadDailySerializer(data=request.data)
         if serializer.is_valid():
-            obj = serializer.save(squad=squad_instance)
-            obj.start_time = timezone.now()
-            obj.status = SquadDailyPicking.Status.active
-            obj.save()
-
+            obj = serializer.save(squad=squad_instance, start_time=timezone.now(),
+                                  status=SquadDailyPicking.Status.active)
             return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -142,8 +138,8 @@ class SquadDailyEndAPI(APIView):
 
         serializer = EndSquadDailySerializer(obj, data=request.data, partial=True)
         if serializer.is_valid():
-            updated_obj = serializer.save(end_time=timezone.now(), status=SquadDailyPicking.Status.finished)
-            return Response(SquadDailySerializer(updated_obj).data, status=status.HTTP_200_OK)
+            serializer.save(end_time=timezone.now(), status=SquadDailyPicking.Status.finished)
+            return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

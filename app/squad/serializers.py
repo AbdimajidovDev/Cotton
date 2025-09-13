@@ -39,8 +39,8 @@ class SquadNestedSerializer(serializers.ModelSerializer):
 
 class SquadDailySerializer(serializers.ModelSerializer):
     farm = serializers.SerializerMethodField()
-    district = DistrictMinimalSerializer(read_only=True)
-    massive = MassiveMinimalSerializer(read_only=True)
+    district = serializers.SerializerMethodField()
+    massive = serializers.SerializerMethodField()
 
     class Meta:
         model = SquadDailyPicking
@@ -55,10 +55,10 @@ class SquadDailySerializer(serializers.ModelSerializer):
         return obj.farm.full_name if obj.farm else None
 
     def get_district(self, obj):
-        return obj.district.name if obj.district else None
+        return obj.farm.district.name if obj.farm and obj.farm.district else None
 
     def get_massive(self, obj):
-        return obj.massive.name if obj.massive else None
+        return obj.farm.massive.name if obj.farm and obj.farm.massive else None
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -74,13 +74,26 @@ class StartSquadDailySerializer(serializers.ModelSerializer):
         fields = ["workers_count", "farm", "picking_type"]
         read_only_fields = ["start_time", "end_time", "created_at", "status"]
 
+    def create(self, validated_data):
+        farm = validated_data.get("farm")
+        if farm:
+            validated_data["district"] = farm.district
+            validated_data["massive"] = farm.massive
+        return super().create(validated_data)
+
 
 class EndSquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
-        fields = ["picked_area", "masse", "farm", "district", "massive", "picking_type"]
+        fields = ["picked_area", "masse"]
         read_only_fields = ["start_time", "end_time", "created_at", "status"]
 
+    def update(self, instance, validated_data):
+        farm = instance.farm
+        if farm:
+            instance.district = farm.district
+            instance.massive = farm.massive
+        return super().update(instance, validated_data)
 
 
 class WorkerSerializer(serializers.ModelSerializer):
