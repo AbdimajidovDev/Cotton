@@ -13,7 +13,7 @@ import csv
 
 def generate_username():
     # uuid.uuid4.__str__() -> c303282d-f2e6-46ca-a04a-35d3d873712d (takrorlanmas kod yasab beradi)
-    temp_username = f"user_{uuid.uuid4().__str__().split('-')[1]}"
+    temp_username = f"user{uuid.uuid4().__str__().split('-')[1]}"
     while User.objects.filter(username=temp_username):
         temp_username = f"{temp_username}{random.randint(0, 9)}"
     return temp_username
