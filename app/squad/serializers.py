@@ -75,6 +75,7 @@ class StartSquadDailySerializer(serializers.ModelSerializer):
         read_only_fields = ["start_time", "end_time", "created_at", "status"]
 
     def create(self, validated_data):
+        validated_data["status"] = SquadDailyPicking.Status.active
         farm = validated_data.get("farm")
         if farm:
             validated_data["district"] = farm.district
