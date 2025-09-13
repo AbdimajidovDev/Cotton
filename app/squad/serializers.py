@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Squad, SquadDailyPicking, Worker, WorkerDailyPicking, Territory, Scalesman, CottonPicker, \
-    CarDailyPicking
+    CarDailyPicking, PickingType
 from ..region.models import Farm, District, Massive
+from django.utils import timezone
+from datetime import datetime
 
 
 class SquadSerializer(serializers.ModelSerializer):
@@ -132,3 +134,62 @@ class CarDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = CarDailyPicking
         fields = '__all__'
+
+
+class SquadForShtabSerializer(serializers.ModelSerializer):
+    squad_number = serializers.SerializerMethodField()
+    user_full_name = serializers.CharField(source="user.full_name", read_only=True)
+
+    class Meta:
+        model = Squad
+        fields = ["id", "squad_number", "user_full_name"]
+
+    def get_squad_number(self, obj):
+        return obj.squad_number.number if obj.squad_number else None
+
+
+class ShtabSquadDailyCreateSerializer(serializers.ModelSerializer):
+    squad_number = serializers.IntegerField(write_only=True)
+    date = serializers.DateField(write_only=True)
+    picking_type = serializers.PrimaryKeyRelatedField(queryset=PickingType.objects.all())
+
+    class Meta:
+        model = SquadDailyPicking
+        fields = [
+            "id", "squad_number", "date",
+            "farm", "picking_type", "workers_count",
+            "start_time", "end_time", "status"
+        ]
+        read_only_fields = ["id", "start_time", "end_time"]
+
+    def create(self, validated_data):
+        squad_number = validated_data.pop("squad_number")
+        date = validated_data.pop("date")
+
+        try:
+            squad = Squad.objects.get(squad_number__number=squad_number)
+        except Squad.DoesNotExist:
+            raise serializers.ValidationError({"squad_number": "Bunday squad mavjud emas"})
+
+        now_time = timezone.localtime().time()
+        start_dt = timezone.make_aware(
+            datetime(
+                year=date.year,
+                month=date.month,
+                day=date.day,
+                hour=now_time.hour,
+                minute=now_time.minute,
+                second=now_time.second
+            )
+        )
+
+        validated_data["start_time"] = start_dt
+        validated_data["squad"] = squad
+        validated_data["status"] = SquadDailyPicking.Status.active
+
+        farm = validated_data.get("farm")
+        if farm:
+            validated_data["district"] = farm.district
+            validated_data["massive"] = farm.massive
+
+        return SquadDailyPicking.objects.create(**validated_data)

@@ -9,12 +9,12 @@ from django.utils.timezone import now
 
 from .models import (
     Squad, SquadDailyPicking, Worker, WorkerDailyPicking,
-    Territory, Scalesman, CottonPicker, CarDailyPicking
+    Territory, Scalesman, CottonPicker, CarDailyPicking, Shtab
 )
 from .serializers import (
     SquadSerializer, SquadDailySerializer, WorkerSerializer, WorkerDailySerializer,
     TerritorySerializer, ScalesmanSerializer, CottonPickerSerializer, CarDailySerializer, StartSquadDailySerializer,
-    EndSquadDailySerializer
+    EndSquadDailySerializer, SquadForShtabSerializer, ShtabSquadDailyCreateSerializer
 )
 
 
@@ -423,3 +423,22 @@ class CarDailyDetailAPI(APIView):
         obj = get_object_or_404(CarDailyPicking, pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(tags=["Shtab"])
+class ShtabAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ShtabSquadDailyCreateSerializer
+
+    def get(self, request):
+        squads = Squad.objects.all()
+        serializer = SquadForShtabSerializer(squads, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(request=ShtabSquadDailyCreateSerializer, responses=ShtabSquadDailyCreateSerializer)
+    def post(self, request):
+        serializer = ShtabSquadDailyCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            return Response(ShtabSquadDailyCreateSerializer(obj).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
