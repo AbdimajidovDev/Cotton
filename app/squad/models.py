@@ -24,7 +24,7 @@ class Squad(models.Model):
     shtab = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads_as_shtab')
     neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
     workers_count = models.IntegerField(blank=True, null=True)
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Otryad: {self.squad_number.number}"
