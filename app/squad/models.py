@@ -121,7 +121,7 @@ class CottonPicker(models.Model):
 
 
 class CarDailyPicking(models.Model):
-    cotton_picker = models.ForeignKey(CottonPicker, on_delete=models.CASCADE)
+    cotton_picker = models.ForeignKey(CottonPicker, on_delete=models.CASCADE, related_name='car_dailies_picking')
     farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, blank=True, null=True)
     fuel = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)

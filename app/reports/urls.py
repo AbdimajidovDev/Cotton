@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import TerritoryReportAPIView
+from .views import RegionReportAPIView
 
 urlpatterns = [
-    path("reports/territories/", TerritoryReportAPIView.as_view(), name="territory-reports"),
+    path("reports/regions/<int:pk>/", RegionReportAPIView.as_view(), name="territory-reports"),
 ]
