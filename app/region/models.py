@@ -38,8 +38,8 @@ class Massive(models.Model):
 
 
 class Neighborhood(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
-    massive = models.ForeignKey(Massive, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, related_name='neighborhoods')
+    massive = models.ForeignKey(Massive, on_delete=models.CASCADE, related_name='neighborhoods')
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255, blank=True, null=True)
     crop_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
