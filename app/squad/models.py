@@ -22,7 +22,7 @@ class Squad(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads')
     squad_number = models.ForeignKey(SquadNumber, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads')
     shtab = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='squads_as_shtab')
-    neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE, null=True, blank=True)
+    neighborhood = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
     workers_count = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -45,13 +45,13 @@ class SquadDailyPicking(models.Model):
 
     district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
     massive = models.ForeignKey(Massive, on_delete=models.SET_NULL, null=True, blank=True)
-    squad = models.ForeignKey(Squad, on_delete=models.CASCADE, null=True, blank=True)
+    squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.active)
     farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, null=True, blank=True)
     masse = models.FloatField(null=True, blank=True)
     picking_type = models.ForeignKey(PickingType, on_delete=models.SET_NULL, null=True, blank=True)
     picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
-    workers_count = models.IntegerField(null=True, blank=True)
+    workers_count = models.IntegerField()
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -65,10 +65,10 @@ class SquadDailyPicking(models.Model):
 
 class Worker(models.Model):
     squad = models.ForeignKey(Squad, on_delete=models.SET_NULL, blank=True, null=True)
-    full_name = models.CharField(max_length=255, null=True, blank=True)
-    passport_id = models.CharField(max_length=10, null=True, blank=True)
-    phone_number = models.CharField(max_length=13, null=True, blank=True)
-    is_active = models.BooleanField(default=True, null=True, blank=True)
+    full_name = models.CharField(max_length=255)
+    passport_id = models.CharField(max_length=10)
+    phone_number = models.CharField(max_length=13)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.full_name
@@ -85,7 +85,7 @@ class WorkerDailyPicking(models.Model):
 
 class Territory(models.Model):
     name = models.CharField(max_length=255)
-    squad = models.ForeignKey(Squad, on_delete=models.CASCADE, null=True, blank=True)
+    squad = models.ForeignKey(Squad, on_delete=models.CASCADE)
     picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
