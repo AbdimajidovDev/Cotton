@@ -71,8 +71,8 @@ class SquadDailySerializer(serializers.ModelSerializer):
 class StartSquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
-        fields = ["workers_count", "farm", "picking_type"]
-        read_only_fields = ["start_time", "end_time", "created_at", "status"]
+        fields = ["workers_count", "farm", "picking_type", "squad"]
+        read_only_fields = ["start_time", "end_time", "created_at", "status", "squad"]
 
     def create(self, validated_data):
         validated_data["status"] = SquadDailyPicking.Status.active
