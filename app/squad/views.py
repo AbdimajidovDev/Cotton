@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from datetime import date
+from django.utils.timezone import now
 
 from .models import (
     Squad, SquadDailyPicking, Worker, WorkerDailyPicking,
@@ -66,31 +66,51 @@ class SquadDetailAPI(APIView):
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyAPI(APIView):
     serializer_class = SquadDailySerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        queryset = SquadDailyPicking.objects.all()
+        squads = Squad.objects.filter(user=request.user)
+        if not squads.exists():
+            return Response([], status=status.HTTP_200_OK)
+
+        queryset = (
+            SquadDailyPicking.objects
+            .filter(squad__in=squads)
+            .order_by('-created_at', '-start_time')
+        )
         serializer = SquadDailySerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        squads = Squad.objects.filter(user=request.user)
+        squad_instance = squads.first()
+        if not squad_instance:
+            return Response({"detail": "User does not belong to any squad"}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = SquadDailySerializer(data=request.data)
         if serializer.is_valid():
-            obj = serializer.save()
+            obj = serializer.save(squad=squad_instance)
             return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyDetailAPI(APIView):
     serializer_class = SquadDailySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, request, pk):
+        squads = Squad.objects.filter(user=request.user)
+        return get_object_or_404(SquadDailyPicking, pk=pk, squad__in=squads)
 
     def get(self, request, pk):
-        obj = get_object_or_404(SquadDailyPicking, pk=pk)
+        obj = self.get_object(request, pk)
         serializer = SquadDailySerializer(obj)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        obj = get_object_or_404(SquadDailyPicking, pk=pk)
+        obj = self.get_object(request, pk)
         serializer = SquadDailySerializer(obj, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -98,7 +118,7 @@ class SquadDailyDetailAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        obj = get_object_or_404(SquadDailyPicking, pk=pk)
+        obj = self.get_object(request, pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -109,15 +129,14 @@ class SquadDailyStartAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = request.user
-        squad_instance = Squad.objects.filter(user=user).first()
+        squads = Squad.objects.filter(user=request.user)
+        squad_instance = squads.first()
         if not squad_instance:
             return Response({"detail": "User does not belong to any squad"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = StartSquadDailySerializer(data=request.data)
+        serializer = SquadDailySerializer(data=request.data)
         if serializer.is_valid():
-            obj = serializer.save(squad=squad_instance, start_time=timezone.now(),
-                                  status=SquadDailyPicking.Status.active)
+            obj = serializer.save(squad=squad_instance)
             return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -150,12 +169,14 @@ class SquadDailyTodayAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        today = date.today()
+        today = now().date()
         squads = Squad.objects.filter(user=request.user)
+
         queryset = SquadDailyPicking.objects.filter(
-            created_at=today,
-            squad__in=squads
-        )
+            squad__in=squads,
+            created_at__date=today
+        ).order_by('-created_at')
+
         serializer = SquadDailySerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
