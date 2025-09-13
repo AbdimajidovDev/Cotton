@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'app.users',
     'app.region',
     'app.squad',
+    'app.reports',
 ]
 
 SPECTACULAR_SETTINGS = {

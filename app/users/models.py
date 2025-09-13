@@ -45,6 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         SQUAD = 'sd', 'squad'
         SCALESMAN = 'sm', 'scalesman'
         SHTAB = 'sh', 'shtab'
+        DRIVER = 'dr', 'driver'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=100)

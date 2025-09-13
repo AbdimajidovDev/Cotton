@@ -68,12 +68,11 @@ class WorkerAdmin(admin.ModelAdmin):
 @admin.register(Territory)
 class TerritoryAdmin(admin.ModelAdmin):
     list_display = ("name", "squad", "picked_area")
-    inlines = [CottonPickerInline]
 
 
 @admin.register(CottonPicker)
 class CottonPickerAdmin(admin.ModelAdmin):
-    list_display = ("car_number", "hudud", "farm", "created_at")
+    list_display = ("user", "car_number", "created_at")
     inlines = [CarDailyPickingInline]
 
 

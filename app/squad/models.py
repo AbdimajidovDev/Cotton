@@ -112,9 +112,8 @@ class Scalesman(models.Model):
 
 
 class CottonPicker(models.Model):
-    car_number = models.IntegerField()
-    hudud = models.ForeignKey(Territory, on_delete=models.CASCADE)
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    car_number = models.CharField(max_length=22)
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -123,11 +122,12 @@ class CottonPicker(models.Model):
 
 class CarDailyPicking(models.Model):
     cotton_picker = models.ForeignKey(CottonPicker, on_delete=models.CASCADE)
-    fuel = models.FloatField()
+    farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, blank=True, null=True)
+    fuel = models.DecimalField(max_digits=20, decimal_places=2)
     picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
-    cotton_masse = models.FloatField()
-    start_date = models.DateField()
-    end_date = models.DateField()
+    cotton_masse = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
 
     def __str__(self):
         return f"{self.cotton_picker.car_number}"
