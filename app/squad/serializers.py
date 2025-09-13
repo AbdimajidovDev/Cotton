@@ -52,8 +52,13 @@ class SquadDailySerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "start_time", "end_time"]
 
     def get_farm(self, obj):
-        # agar farm mavjud bo'lsa full_name qaytaradi
         return obj.farm.full_name if obj.farm else None
+
+    def get_district(self, obj):
+        return obj.district.name if obj.district else None
+
+    def get_massive(self, obj):
+        return obj.massive.name if obj.massive else None
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -61,7 +66,6 @@ class SquadDailySerializer(serializers.ModelSerializer):
             instance.squad.squad_number.number if instance.squad.squad_number else None
         )
         return data
-
 
 
 class StartSquadDailySerializer(serializers.ModelSerializer):

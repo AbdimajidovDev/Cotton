@@ -135,11 +135,12 @@ class SquadDailyEndAPI(APIView):
         if obj.end_time:
             return Response({"detail": "End time already set."}, status=status.HTTP_400_BAD_REQUEST)
 
-        obj.end_time = timezone.now()
-        obj.status = SquadDailyPicking.Status.finished
-        obj.save()
+        serializer = EndSquadDailySerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(end_time=timezone.now(), status=SquadDailyPicking.Status.finished)
+            return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
 
-        return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=['SquadDaily'])
