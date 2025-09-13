@@ -54,10 +54,13 @@ class SquadDailyPicking(models.Model):
     workers_count = models.IntegerField()
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.squad.squad_number)
+
+    class Meta:
+        ordering = ['-created_at', '-start_time']
 
 
 class Worker(models.Model):
