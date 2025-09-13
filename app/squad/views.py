@@ -133,9 +133,9 @@ class SquadDailyStartAPI(APIView):
         if not squad_instance:
             return Response({"detail": "User does not belong to any squad"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = SquadDailySerializer(data=request.data)
+        serializer = StartSquadDailySerializer(data=request.data)
         if serializer.is_valid():
-            obj = serializer.save(squad=squad_instance)
+            obj = serializer.save(squad=squad_instance, start_time=timezone.now())
             return Response(SquadDailySerializer(obj).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -144,14 +144,14 @@ class SquadDailyStartAPI(APIView):
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyEndAPI(APIView):
     serializer_class = EndSquadDailySerializer
-    permission_classes = [IsAuthenticated]  # Qo'shing, chunki boshqalarda bor
+    permission_classes = [IsAuthenticated]
 
-    def get_object(self, request, pk):  # Qo'shing, permission tekshiruvi uchun
+    def get_object(self, request, pk):
         squads = Squad.objects.filter(user=request.user)
         return get_object_or_404(SquadDailyPicking, pk=pk, squad__in=squads)
 
     def post(self, request, pk):
-        obj = self.get_object(request, pk)  # Permission tekshiruvi bilan
+        obj = self.get_object(request, pk)
 
         if not obj.start_time:
             return Response({"detail": "Start time not set yet."}, status=status.HTTP_400_BAD_REQUEST)
