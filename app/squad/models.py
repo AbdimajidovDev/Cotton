@@ -123,11 +123,12 @@ class CottonPicker(models.Model):
 class CarDailyPicking(models.Model):
     cotton_picker = models.ForeignKey(CottonPicker, on_delete=models.CASCADE)
     farm = models.ForeignKey(Farm, on_delete=models.SET_NULL, blank=True, null=True)
-    fuel = models.DecimalField(max_digits=20, decimal_places=2)
+    fuel = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     picked_area = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
     cotton_masse = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.cotton_picker.car_number}"
