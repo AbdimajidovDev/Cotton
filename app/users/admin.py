@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, UserExcelUpload
-from .utility import import_user_from_excel
+from .models import User, SquadExcelUpload, NeighborhoodExcelUpload
+from .utility import import_neighborhood_user_from_excel, import_squad_user_from_excel
 
 
 @admin.register(User)
@@ -31,8 +31,8 @@ class UserAdmin(BaseUserAdmin):
 ###########################################################################################################
 
 
-@admin.register(UserExcelUpload)
-class UserExcelUploadAdmin(admin.ModelAdmin):
+@admin.register(NeighborhoodExcelUpload)
+class NeighborhoodExcelUploadAdmin(admin.ModelAdmin):
     list_display = ("file", "uploaded_at")
 
     def save_model(self, request, obj, form, change):
@@ -40,7 +40,25 @@ class UserExcelUploadAdmin(admin.ModelAdmin):
 
         if obj.file:
             try:
-                import_user_from_excel(obj.file.path)
+                import_neighborhood_user_from_excel(obj.file.path)
+            except Exception as e:
+                self.message_user(
+                    request,
+                    f"Excel fayldan ma’lumot import qilishda xatolik yuz berdi: {e}",
+                    level='error'
+                )
+
+
+@admin.register(SquadExcelUpload)
+class SquadExcelUploadAdmin(admin.ModelAdmin):
+    list_display = ("file", "uploaded_at")
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if obj.file:
+            try:
+                import_squad_user_from_excel(obj.file.path)
             except Exception as e:
                 self.message_user(
                     request,
