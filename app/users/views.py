@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .serializers import LoginSerializer, LogoutSerializer, MeSerializer
 from .models import User
 
@@ -14,21 +16,30 @@ class LoginAPIView(APIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data["user"]
-        tokens = user.get_tokens()
+        refresh = RefreshToken.for_user(user)
+
+        squad_number = None
+        if user.role == User.UserRoles.SQUAD:
+            first_squad = user.squads.first()
+            squad_number = first_squad.squad_number.number if first_squad and first_squad.squad_number else None
 
         return Response({
             "success": True,
             "status_code": 200,
             "message": "Login muvaffaqiyatli bajarildi",
             "data": {
-                "user_id": str(user.id),
+                "user_id": user.id,
                 "full_name": user.full_name,
                 "role": user.role,
-                "tokens": tokens
+                "squad_number": squad_number,
+                "tokens": {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token)
+                }
             }
         }, status=status.HTTP_200_OK)
 
