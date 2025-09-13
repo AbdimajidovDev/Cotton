@@ -77,10 +77,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_table = 'user'
 
 
+class SquadExcelUpload(models.Model):
+    file = models.FileField(upload_to="uploads/users/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Excel: {self.file.name}"
 
 
-
-class UserExcelUpload(models.Model):
+class NeighborhoodExcelUpload(models.Model):
     file = models.FileField(upload_to="uploads/users/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
