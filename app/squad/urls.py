@@ -7,7 +7,7 @@ from .views import (
     TerritoryAPI, TerritoryDetailAPI,
     ScalesmanAPI, ScalesmanDetailAPI,
     CottonPickerAPI, CottonPickerDetailAPI,
-    CarDailyAPI, CarDailyDetailAPI, WorkerDetailAPI, SquadDailyStartAPI, SquadDailyEndAPI
+    CarDailyAPI, CarDailyDetailAPI, WorkerDetailAPI, SquadDailyStartAPI, SquadDailyEndAPI, SquadDailyTodayAPI
 )
 
 app_name = 'squad'
@@ -18,6 +18,7 @@ urlpatterns = [
 
     path("squad-daily/", SquadDailyAPI.as_view(), name="squad-daily-list"),
     path("squad-daily/<int:pk>/", SquadDailyDetailAPI.as_view(), name="squad-daily-detail"),
+    path("squad-today-daily/", SquadDailyTodayAPI.as_view(), name="squad-today-daily"),
     path('squad-daily/start/', SquadDailyStartAPI.as_view()),
     path('squad-daily/<int:pk>/end/', SquadDailyEndAPI.as_view()),
 

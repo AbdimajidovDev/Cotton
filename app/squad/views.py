@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from datetime import date
 
 from .models import (
     Squad, SquadDailyPicking, Worker, WorkerDailyPicking,
@@ -139,6 +140,22 @@ class SquadDailyEndAPI(APIView):
         obj.save()
 
         return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=['SquadDaily'])
+class SquadDailyTodayAPI(APIView):
+    serializer_class = SquadDailySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        today = date.today()
+        squads = Squad.objects.filter(user=request.user)
+        queryset = SquadDailyPicking.objects.filter(
+            created_at=today,
+            squad__in=squads
+        )
+        serializer = SquadDailySerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=['Worker'])
