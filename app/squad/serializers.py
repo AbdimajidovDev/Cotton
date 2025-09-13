@@ -78,8 +78,9 @@ class StartSquadDailySerializer(serializers.ModelSerializer):
 class EndSquadDailySerializer(serializers.ModelSerializer):
     class Meta:
         model = SquadDailyPicking
-        fields = ["picked_area", "masse"]
+        fields = ["picked_area", "masse", "farm", "district", "massive", "picking_type"]
         read_only_fields = ["start_time", "end_time", "created_at", "status"]
+
 
 
 class WorkerSerializer(serializers.ModelSerializer):

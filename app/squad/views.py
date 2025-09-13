@@ -58,6 +58,11 @@ class SquadDetailAPI(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(
+    tags=["SquadDaily"],
+    request=StartSquadDailySerializer,
+    responses={201: SquadDailySerializer}
+)
 @extend_schema(tags=['SquadDaily'])
 class SquadDailyAPI(APIView):
     serializer_class = SquadDailySerializer
@@ -137,8 +142,8 @@ class SquadDailyEndAPI(APIView):
 
         serializer = EndSquadDailySerializer(obj, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save(end_time=timezone.now(), status=SquadDailyPicking.Status.finished)
-            return Response(SquadDailySerializer(obj).data, status=status.HTTP_200_OK)
+            updated_obj = serializer.save(end_time=timezone.now(), status=SquadDailyPicking.Status.finished)
+            return Response(SquadDailySerializer(updated_obj).data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
