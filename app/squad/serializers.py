@@ -38,25 +38,30 @@ class SquadNestedSerializer(serializers.ModelSerializer):
 
 
 class SquadDailySerializer(serializers.ModelSerializer):
-    # squad = SquadNestedSerializer(read_only=True)
-    # farm = FarmMinimalSerializer(read_only=True)
+    farm = serializers.SerializerMethodField()
     district = DistrictMinimalSerializer(read_only=True)
     massive = MassiveMinimalSerializer(read_only=True)
 
     class Meta:
         model = SquadDailyPicking
         fields = [
-            "id", "squad", "status", "district", "massive",
+            "id", "squad", "status", "farm", "district", "massive",
             "masse", "picking_type", "picked_area", "workers_count",
             "start_time", "end_time", "created_at"
         ]
         read_only_fields = ["created_at", "start_time", "end_time"]
 
+    def get_farm(self, obj):
+        # agar farm mavjud bo'lsa full_name qaytaradi
+        return obj.farm.full_name if obj.farm else None
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['squad_number'] = instance.squad.squad_number.number if instance.squad.squad_number else None
-        data['full_name'] = instance.farm.full_name if instance.farm.full_name else None
+        data['squad_number'] = (
+            instance.squad.squad_number.number if instance.squad.squad_number else None
+        )
         return data
+
 
 
 class StartSquadDailySerializer(serializers.ModelSerializer):
